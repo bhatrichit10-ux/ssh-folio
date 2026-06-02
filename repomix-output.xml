@@ -1,0 +1,399 @@
+This file is a merged representation of a subset of the codebase, containing files not matching ignore patterns, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of a subset of the repository's contents that is considered the most important context.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching these patterns are excluded: node_modules
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+.gitignore
+LICENSE
+package.json
+README.md
+src/index.js
+src/modules/chalk.js
+src/modules/ready.js
+src/utils/genKeys.js
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="package.json">
+{
+  "name": "ssh-folio",
+  "version": "1.0.0",
+  "description": "Well, its a portfolio, which you ssh into",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bhatrichit10-ux/ssh-folio.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/bhatrichit10-ux/ssh-folio/issues"
+  },
+  "homepage": "https://github.com/bhatrichit10-ux/ssh-folio#readme",
+  "dependencies": {
+    "ssh2": "^1.17.0"
+  }
+}
+</file>
+
+<file path="src/index.js">
+const { Server } = require('ssh2');
+const fs = require('fs');
+const path = require('path');
+const readyHandler = require('./modules/ready');
+
+new Server(
+    {
+        hostKeys: [fs.readFileSync(path.join(__dirname, 'keys', 'private.pem'))]
+    },
+    (client) => {
+        client.on('authentication', (ctx) => {
+            ctx.accept();
+        });
+
+        client.on('ready', () => {
+            readyHandler(client);
+        });
+    }
+).listen(2222, '0.0.0.0', () => {
+    console.log('Listening on port 2222');
+});
+</file>
+
+<file path="src/modules/chalk.js">
+module.exports = ansi = {
+  reset: "\x1b[0m",
+  bold: "\x1b[1m",
+  dim: "\x1b[2m",
+  italic: "\x1b[3m",
+  underline: "\x1b[4m",
+  blink: "\x1b[5m",
+  reverse: "\x1b[7m",
+  hidden: "\x1b[8m",
+  fg: {
+    black: "\x1b[30m",
+    red: "\x1b[31m",
+    green: "\x1b[32m",
+    yellow: "\x1b[33m",
+    blue: "\x1b[34m",
+    magenta: "\x1b[35m",
+    cyan: "\x1b[36m",
+    white: "\x1b[37m",
+    brightBlack: "\x1b[90m",
+    brightRed: "\x1b[91m",
+    brightGreen: "\x1b[92m",
+    brightYellow: "\x1b[93m",
+    brightBlue: "\x1b[94m",
+    brightMagenta: "\x1b[95m",
+    brightCyan: "\x1b[96m",
+    brightWhite: "\x1b[97m"
+  },
+  bg: {
+    black: "\x1b[40m",
+    red: "\x1b[41m",
+    green: "\x1b[42m",
+    yellow: "\x1b[43m",
+    blue: "\x1b[44m",
+    magenta: "\x1b[45m",
+    cyan: "\x1b[46m",
+    white: "\x1b[47m",
+    brightBlack: "\x1b[100m",
+    brightRed: "\x1b[101m",
+    brightGreen: "\x1b[102m",
+    brightYellow: "\x1b[103m",
+    brightBlue: "\x1b[104m",
+    brightMagenta: "\x1b[105m",
+    brightCyan: "\x1b[106m",
+    brightWhite: "\x1b[107m"
+  },
+  cursor: {
+    clearScreen: "\x1b[2J",
+    clearLine: "\x1b[2K",
+    home: "\x1b[H",
+    up: (lines = 1) => `\x1b[${lines}A`,
+    down: (lines = 1) => `\x1b[${lines}B`,
+    forward: (cols = 1) => `\x1b[${cols}C`,
+    back: (cols = 1) => `\x1b[${cols}D`,
+    goTo: (row, col) => `\x1b[${row};${col}H`
+  }
+};
+</file>
+
+<file path="src/modules/ready.js">
+const chalk = require('./chalk.js');
+module.exports = function(client) {
+    console.log('Authenticated');
+
+    client.on('session', (accept) => {
+        const session = accept();
+        session.on('pty', (accept, reject, info) => {
+            accept();
+        });
+        session.on('shell', (accept) => {
+            const stream = accept();
+            stream.on('data', (data) => {
+                const input = data.toString();
+
+                if (input === '\x03') {
+                    stream.write('^C\r\n');
+                    stream.end();
+                    return;
+                }
+                stream.write(chalk.bold.green('Welcome to the SSH server!\r\n'));
+
+            });
+        });
+    });
+};
+</file>
+
+<file path="src/utils/genKeys.js">
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
+
+const keysDir = path.join(__dirname, '..', 'keys');
+
+if(!fs.existsSync(keysDir)) {
+    fs.mkdirSync(keysDir);
+}
+
+ const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
+        modulusLength: 2048,
+        publicKeyEncoding: {
+            type: 'spki',
+            format: 'pem'
+        },
+        privateKeyEncoding: {
+            type: 'pkcs1',
+            format: 'pem'
+        }
+    });
+
+fs.writeFileSync(path.join(keysDir, 'public.pem'), publicKey);
+fs.writeFileSync(path.join(keysDir, 'private.pem'), privateKey);
+console.log('SSH keys generated');
+</file>
+
+<file path=".gitignore">
+# Logs
+keys/
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Directory for instrumented libs generated by jscoverage/JSCover
+lib-cov
+
+# Coverage directory used by tools like istanbul
+coverage
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Grunt intermediate storage (https://gruntjs.com/creating-plugins#storing-task-files)
+.grunt
+
+# Bower dependency directory (https://bower.io/)
+bower_components
+
+# node-waf configuration
+.lock-wscript
+
+# Compiled binary addons (https://nodejs.org/api/addons.html)
+build/Release
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Snowpack dependency directory (https://snowpack.dev/)
+web_modules/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variable files
+.env
+.env.*
+!.env.example
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
+
+# Next.js build output
+.next
+out
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+.output
+
+# Gatsby files
+.cache/
+# Comment in the public line in if your project uses Gatsby and not Next.js
+# https://nextjs.org/blog/next-9-1#public-directory-support
+# public
+
+# vuepress build output
+.vuepress/dist
+
+# vuepress v2.x temp directory
+.temp
+
+# Sveltekit cache directory
+.svelte-kit/
+
+# vitepress build output
+**/.vitepress/dist
+
+# vitepress cache directory
+**/.vitepress/cache
+
+# Docusaurus cache and generated files
+.docusaurus
+
+# Serverless directories
+.serverless/
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# Firebase cache directory
+.firebase/
+
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# pnpm
+.pnpm-store
+
+# yarn v3
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Vite files
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+.vite/
+</file>
+
+<file path="LICENSE">
+MIT License
+
+Copyright (c) 2026 Richit Bhat
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+</file>
+
+<file path="README.md">
+# ssh-folio
+Well, its a portfolio, which you ssh into
+</file>
+
+</files>

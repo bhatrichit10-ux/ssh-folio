@@ -1,0 +1,24 @@
+{
+  "name": "ssh-folio",
+  "version": "1.0.0",
+  "description": "Well, its a portfolio, which you ssh into",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bhatrichit10-ux/ssh-folio.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/bhatrichit10-ux/ssh-folio/issues"
+  },
+  "homepage": "https://github.com/bhatrichit10-ux/ssh-folio#readme",
+  "dependencies": {
+    "ssh2": "^1.17.0"
+  }
+}
