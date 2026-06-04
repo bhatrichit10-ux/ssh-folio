@@ -30,13 +30,15 @@ module.exports = function(client) {
 
                 stream.write(chalk.green('\r\nWelcome to SSH-Folio!\r\n'));
                 stream.write(chalk.green('This is my very own portfolio!\r\n'));
-                stream.write(chalk.green('Feel free to explore and check out my projects!\r\n'));
                 stream.write(chalk.green("Type 'help' for a list of commands.\r\n"));
+                stream.write(chalk.green('Hello ') + chalk.yellow(client.username + '!\r\n'));
+                stream.write(chalk.yellow('psst... ') + chalk.blue('give my repository ') + chalk.green('a star') + chalk.yellow(' ★\r\n'));
             };
 
             const commands = {
                 help() {
                     stream.write(chalk.blue('\r\nAvailable commands:\r\n'));
+                    stream.write(chalk.blue('whoareyou - Learn more about me\r\n'));
                     stream.write(chalk.blue('help     - Show this help message\r\n'));
                     stream.write(chalk.blue('projects - List my projects\r\n'));
                     stream.write(chalk.blue('contact  - Show contact information\r\n'));
@@ -49,16 +51,25 @@ module.exports = function(client) {
                     stream.write(chalk.blue('1. Aaloo - Virtual pet potato\r\n'));
                     stream.write(chalk.blue('2. Archpad - Arch Linux HackPad\r\n'));
                     stream.write(chalk.blue('3. SSH-Folio - Terminal portfolio\r\n'));
-                    stream.write(chalk.green('\r\nGitHub: https://github.com/bhatrichit10-ux\r\n'));
+                    stream.write(chalk.green('GitHub:') + chalk.bgBlue('https://github.com/bhatrichit10-ux\r\n'));
                 },
 
                 contact() {
                     stream.write(chalk.blue('\r\nContact:\r\n'));
-                    stream.write(chalk.green('GitHub: https://github.com/bhatrichit10-ux\r\n'));
+                    stream.write(chalk.blue('Email: ') + chalk.green('bhatrichit10@gmail.com') + '\r\n');
+                    stream.write(chalk.green('GitHub:') + chalk.bgBlue('https://github.com/bhatrichit10-ux\r\n'));
                 },
 
                 clear() {
                     renderHome();
+                },
+                whoareyou() {
+                    stream.write(chalk.blue('I am Richit!'));
+                    stream.write(chalk.blue('- A hackclubber from ') + chalk.green('Jammu/India\r\n'));
+                    stream.write(chalk.blue('- I love coding,') + chalk.green('gaming, and') + chalk.blue(' learning new things!\r\n'));
+                    stream.write(chalk.blue('me ') + chalk.red('♥ ') + chalk.yellow('JavaScript\r\n'));
+                    stream.write(chalk.blue('I learnt javascript, my first ever programming language to prank my friends on discord!\r\n'));
+ 
                 },
 
                 exit() {
