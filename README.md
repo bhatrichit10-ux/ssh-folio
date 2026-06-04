@@ -22,6 +22,6 @@ The most interesting part is that it only uses only one dependencies, probably b
 
 ## Usage
 ```
-ssh yourname@richit.me -p 2222
+ssh yourname@2a01:4f9:3081:399c::307 -p 2222  
 ```
 please replace `yourname` with your nickname/first name, :D
