@@ -25,3 +25,8 @@ The most interesting part is that it only uses only one dependencies, probably b
 ssh yourname@2a01:4f9:3081:399c::307 -p 2222  
 ```
 please replace `yourname` with your nickname/first name, :D
+
+If you have trouble connecting to it, try using [SSH-Easy](https://ssheasy.com/)
+and try putting these settings ( Enclose the ip with [ip-here] )
+![Enter password](assets/image.png)
+(also enter anything as password, i prefer goog)
